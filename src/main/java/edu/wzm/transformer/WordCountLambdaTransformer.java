@@ -17,8 +17,10 @@ import java.util.Arrays;
 
 /**
  * 使用Lambda方式需要使用into()告诉MapElement，我们Mapper的返回值类型。
+ *
+ * @link{https://sanjayasubedi.com.np/apachebeam/beam-ptransforms/}
  */
-public class CountWordLambdaTransformer
+public class WordCountLambdaTransformer
         extends PTransform<PCollection<String>, PCollection<KV<String, Long>>> {
     @Override
     public PCollection<KV<String, Long>> expand(PCollection<String> input) {
@@ -38,7 +40,7 @@ public class CountWordLambdaTransformer
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline pipeline = Pipeline.create(options);
         pipeline.apply(TextIO.read().from(input))
-                .apply(new CountWordLambdaTransformer())
+                .apply(new WordCountLambdaTransformer())
                 .apply(MapElements.into(TypeDescriptor.of(String.class))
                         .via(kv -> String.format("%s: %d", kv.getKey(), kv.getValue())))
                 .apply(TextIO.write().to(output));
