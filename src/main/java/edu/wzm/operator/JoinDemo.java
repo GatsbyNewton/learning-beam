@@ -15,12 +15,15 @@ import org.apache.beam.sdk.transforms.JsonToRow;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.Row;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class JsonTransformer implements Callable<String>, Serializable {
+public class JoinDemo implements Callable<String>, Serializable {
+    public static final Logger LOGGER = LogManager.getLogger(JoinDemo.class);
 
     public static final Map<String, String> map = new ConcurrentHashMap<>();
 
@@ -30,7 +33,7 @@ public class JsonTransformer implements Callable<String>, Serializable {
         // TODO 数据解析
         JSONArray baseArray = JSON.parseArray(base);
         Set<String> columnNames = currArray.getJSONObject(0).keySet();
-        JsonTransformer transformer = new JsonTransformer();
+        JoinDemo transformer = new JoinDemo();
         transformer.run(currArray, baseArray, columnNames, "z=x+y", "where a=b", Thread.currentThread().getName());
         return Thread.currentThread().getName();
     }
@@ -114,7 +117,7 @@ public class JsonTransformer implements Callable<String>, Serializable {
 
         List<Future<String>> futures = new ArrayList<>();
         for (int i = 0; i < 1; i++) {
-            Future<String> future = service.submit(new JsonTransformer());
+            Future<String> future = service.submit(new JoinDemo());
             futures.add(future);
         }
 

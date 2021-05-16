@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CountWordTransform
+public class CountWordTransformer
         extends PTransform<PCollection<String>, PCollection<KV<String, Long>>> {
 
     public static class ExtractWord extends SimpleFunction<String, List<String>> {
@@ -41,7 +41,7 @@ public class CountWordTransform
         PipelineOptions options = PipelineOptionsFactory.create();
         Pipeline pipeline = Pipeline.create(options);
         pipeline.apply(TextIO.read().from(input))
-                .apply(new CountWordTransform())
+                .apply(new CountWordTransformer())
                 .apply(MapElements.into(TypeDescriptors.strings())
                         .via(kv -> String.format("%s: %d", kv.getKey(), kv.getValue())))
                 .apply(TextIO.write().to(output));
